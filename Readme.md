@@ -30,6 +30,7 @@ $ \int_a^b f(x) dx \approx \frac{f(b) + f(a)}{2} (b - a) $
 
 Суть метода заключается в приближении подынтегральной функции на отрезке $[a, b]$ интерполяционным многочленом второй степени $p_2(x)$, то есть приближение графика функции на отрезке параболой.
 
-$ \int_a^b f(x) dx \approx \int_a^b p_2(x) \approx \frac{b - a}{6} \left(f(a) + 4 f \left(\frac{b - a}{2} \right) + f(b) \right) $
+\[ \int_a^b f(x) dx \approx \int_a^b p_2(x) \approx \frac{b - a}{6} \left(f(a) + 4 f \left(\frac{b - a}{2} \right) + f(b) \right) \]
 
-![Sympson method](https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson.png)
+<img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson.png" alt="Sympson method" width="200"/>
+<!-- ![Sympson method](https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson.png) -->
