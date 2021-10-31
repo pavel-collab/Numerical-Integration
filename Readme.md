@@ -32,8 +32,9 @@ $ \int_a^b f(x) dx \approx \frac{f(b) + f(a)}{2} (b - a) $
 
 \[ \int_a^b f(x) dx \approx \int_a^b p_2(x) \approx \frac{b - a}{6} \left(f(a) + 4 f \left(\frac{b - a}{2} \right) + f(b) \right) \]
 
-![](https://github.com/pavel-collab/Numerical-Integration/blob/main/images/CodeCogsEqn.gif)
-![](https://github.com/pavel-collab/Numerical-Integration/blob/main/images/render.png)
+<p align="center">
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/render.png" width="200"/>
+</p>
 
 <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson.png" alt="Sympson method" width="200"/>
 <!-- ![Sympson method](https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson.png) -->
