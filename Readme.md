@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/LRrec.png" alt="Right and Left Rectengular method" width="450"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/LRrec.png" alt="Right and Left Rectengular method" width="300"/>
 </p>
 
 ### Метод прямоугольников
@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/rec.png" alt="Rectengular method" width="450"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/rec.png" alt="Rectengular method" width="300"/>
 </p>
 
 ### Метод трапеций 
@@ -36,7 +36,7 @@
 </p>
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Trapes.png" alt="Trapez method" width="450"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Trapes.png" alt="Trapez method" width="300"/>
 </p>
 
 ### Формула Симпсона
@@ -45,9 +45,9 @@
 Суть метода заключается в приближении подынтегральной функции на отрезке $[a, b]$ интерполяционным многочленом второй степени $p_2(x)$, то есть приближение графика функции на отрезке параболой.
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson(eq).gif" alt="Sympson method" width="400"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson(eq).gif" alt="Sympson method" width="300"/>
 </p>
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson.png" alt="Sympson method" width="450"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson.png" alt="Sympson method" width="300"/>
 </p>
