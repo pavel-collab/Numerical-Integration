@@ -21,7 +21,7 @@
 ### Метод прямоугольников
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Rec(eq).gif" alt="Rectengular method" width="200"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Rec(eq).gif" alt="Rectengular method" width="250"/>
 </p>
 
 <p align="center">
@@ -32,7 +32,7 @@
 Метод численного интегрирования функции одной переменной, заключающийся в замене на каждом элементарном отрезке подынтегральной функции на многочлен первой степени, то есть линейную функцию. Площадь под графиком функции аппроксимируется прямоугольными трапециями. 
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Trapez(eq).gif" alt="Trapez method" width="200"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Trapez(eq).gif" alt="Trapez method" width="250"/>
 </p>
 
 <p align="center">
@@ -45,7 +45,7 @@
 Суть метода заключается в приближении подынтегральной функции на отрезке $[a, b]$ интерполяционным многочленом второй степени $p_2(x)$, то есть приближение графика функции на отрезке параболой.
 
 <p align="center">
-    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson(eq).gif" alt="Sympson method" width="300"/>
+    <img src="https://github.com/pavel-collab/Numerical-Integration/blob/main/images/Sympson(eq).gif" alt="Sympson method" width="350"/>
 </p>
 
 <p align="center">
