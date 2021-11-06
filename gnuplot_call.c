@@ -35,12 +35,20 @@ int main(int argc, char* argv[]) {
         close(gcc_pipe[0]);
 
         // Start compilation
-        execlp ("gcc", 
+        execlp (
+                // executable
+                "gcc", 
+                // argv[0], argv[1], ...
                 "gcc", "-Wall", "-Wextra", 
+                // produce position-independent dynamic library (shared option)
                 "-fPIC", "-fPIE", "-shared",
+                // enable optimisations
                 "-O2", "-fomit-frame-pointer", "-march=native", "-mtune=native",
-                "-xc", "-", 
+                // read input from stdin, treat it as a C source
+                "-xc", "-",
+                // link with linkm
                 "-lm", 
+                // save output to ymp.so
                 "-o", "tmp.so", NULL);
         perror("exec");
         return 1;
@@ -83,9 +91,20 @@ int main(int argc, char* argv[]) {
     // Try ro use it
 
     FILE* plot_pipe = popen("gnuplot -persist", "w");
+
+    // fputs("set terminal png size 800, 600\n", plot_pipe);
+    // fputs("set output './images/result.png'\n", plot_pipe);
+
+    fputs("set xlabel 'X'\n", plot_pipe);
+    fputs("set ylabel 'Y'\n", plot_pipe);
+    fputs("set grid\n", plot_pipe);
+    fputs("set xrange [-4*pi:4*pi]\n", plot_pipe);
+    fputs("set yrange [-1.5:1.5]\n", plot_pipe);
+    fputs("set title 'My plot'\n", plot_pipe);
+
     fputs("plot '-' w line\n", plot_pipe);
-    int i;
-    for (i = 0; i < 512; i++) {
+
+    for (int i = -1024; i < 1024; i++) {
         double x = i * M_PI/256;
         fprintf(plot_pipe, "%lf %lf\n", x, (*tmpfun)(x));
     }
