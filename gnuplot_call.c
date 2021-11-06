@@ -14,21 +14,44 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    // Prepare sorce file
-    FILE* f = fopen("tmp.c", "w");
-    fprintf(f,
-            "#include <math.h>\n"
-            "double tmpfun(double x) {return %s;}\n", argv[1]);
-    fclose(f);
-
     // Call gcc
+
+    int gcc_pipe[2];
+    if (pipe(gcc_pipe) < 0) {
+        perror("failed to create pipe");
+        return -1;
+    }
 
     pid_t my_id;
     if ((my_id = fork()) == 0) {
-        execlp("gcc", "gcc", "-w", "-Wall", "-fPIC", "-fPIE", "-shared", "-lm", "tmp.c", "-o", "tmp.so", NULL);
+        // Connect pipe output to stdin, close unnesessary fds
+        close(gcc_pipe[1]);
+
+        if (dup2(gcc_pipe[0], fileno(stdin)) < 0) {
+            perror("dup2");
+            close(gcc_pipe[0]);
+            return -1;
+        }
+        close(gcc_pipe[0]);
+
+        // Start compilation
+        execlp ("gcc", 
+                "gcc", "-Wall", "-Wextra", 
+                "-fPIC", "-fPIE", "-shared",
+                "-O2", "-fomit-frame-pointer", "-march=native", "-mtune=native",
+                "-xc", "-", 
+                "-lm", 
+                "-o", "tmp.so", NULL);
         perror("exec");
         return 1;
     }
+
+    dprintf(gcc_pipe[1],
+            "#include <math.h>\n"
+                "double tmpfun(double x) {"
+                "return %s;"
+            "}\n", argv[1]);
+    close(gcc_pipe[1]);
 
     // Wait for compilation end and check its status
 
@@ -50,7 +73,7 @@ int main(int argc, char* argv[]) {
     }
 
     double (*tmpfun)(double);
-    //! find out man dlopen
+    //! man dlopen
     *(void **) (&tmpfun) = dlsym(tmplib, "tmpfun");
     if ((dlerrstr = dlerror()) != NULL) {
         puts(dlerrstr);
