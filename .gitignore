@@ -1,0 +1,7 @@
+*.vscode
+*.log
+sandbox*
+out
+tmp.*
+*.o
+a.out
