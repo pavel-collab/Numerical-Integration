@@ -1,5 +1,6 @@
 *.vscode
 sandbox*
+*.log
 out
 tmp.*
 *.o
