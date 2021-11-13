@@ -88,6 +88,8 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    // --------------------------------------------------------------------------------------------
+
     // Try ro use it
 
     FILE* plot_pipe = popen("gnuplot -persist", "w");

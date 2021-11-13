@@ -11,6 +11,8 @@ typedef struct {
 } workarea_t;
 
 typedef struct {
+    double (*function)(double);
+
     double int_begin;
     double int_end;
 
