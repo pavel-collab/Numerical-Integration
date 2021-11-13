@@ -11,7 +11,10 @@ lib.o: lib.c
 	gcc -c lib.c
 
 main: lib.o main.o
-	gcc -o a.out $(C_FLAGS) lib.o main.o -lpthread
+	gcc -o a.out $(C_FLAGS) lib.o main.o -lpthread -ldl
+
+gnuplot: gnuplot_call.c
+	gcc -o gnuplot -Wall -Wextra gnuplot_call.c -ldl
 
 clear:
 	rm *.o a.out
