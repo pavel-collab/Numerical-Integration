@@ -16,5 +16,8 @@ main: lib.o main.o
 gnuplot: gnuplot_call.c
 	gcc -o gnuplot -Wall -Wextra gnuplot_call.c -ldl
 
+simple_int: simple_int.c
+	gcc -o simple_int -Wall -Wextra lib.c simple_int.c -ldl
+
 clear:
 	rm *.o a.out

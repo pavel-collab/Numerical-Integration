@@ -2,11 +2,17 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
 #include <dlfcn.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
+
+//TODO: лютый рефактор
+//TODO: уменьшить накладные расходы
+//TODO: переименовать функции, переменные и файлы
 
 #include "lib.h"
 
@@ -41,8 +47,8 @@ void* ThreadIntegrate(void* arg) {
 
 int main(int argc, char* argv[]) {
 
-    if (argc != 2) {
-        printf("Usage: %s <function(x)>\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s <integration limits> <function(x)>\n", argv[0]);
         return -1;
     } 
 
@@ -91,9 +97,10 @@ int main(int argc, char* argv[]) {
             "#include <math.h>\n"
                 "double tmpfun(double x) {"
                 "return %s;"
-            "}\n", argv[1]);
+            "}\n", argv[3]);
     close(gcc_pipe[1]);
 
+    //! большое время ожидания может быть здесь, пока родиель ждет завершения работы ребенка
     int status;
     waitpid(my_id, &status, 0);
 
@@ -121,42 +128,67 @@ int main(int argc, char* argv[]) {
 
     // ===========================================================================================
 
+    // for all threads
     workarea_t workarea =  {
         .g_mutex = PTHREAD_MUTEX_INITIALIZER,
         .sum = 0
     };
 
-    integrate_t int_arg_th1 = {
-        .function = tmpfun,
+    // integration limits
+    double a = atof(argv[1]);
+    double b = atof(argv[2]);
 
-        .int_begin = 0,
-        .int_end = 500,
-        .point_amount = 5000000
-    };
-    integrate_t int_arg_th2 = {
-        .function = tmpfun,
+    // allocate memory for arrays of arguments
+    thread_arg_t* thread_args = (thread_arg_t*) calloc(4, sizeof(thread_arg_t));
+    if (thread_args == NULL) {
+        perror("calloc");
+        return -1;
+    }
 
-        .int_begin = 500,
-        .int_end = 1000,
-        .point_amount = 5000000
-    };
+    integrate_t* int_args = (integrate_t*) calloc(4, sizeof(integrate_t));
+    if (int_args == NULL) {
+        perror("calloc");
+        return -1;
+    }
 
-    thread_arg_t thread_args1 = {
-        .integrate_arg = &int_arg_th1,
-        .workarea_arg = &workarea
-    };
-    thread_arg_t thread_args2 = {
-        .integrate_arg = &int_arg_th2,
-        .workarea_arg = &workarea
-    };
+    // in loop define arrays of qrgs
+    for (int i = 0; i < 4; i++) {
+        integrate_t i_arg = {
+            .function = tmpfun,
 
-    pthread_t thread_id1, thread_id2;
+            .int_begin = a + ((b - a) / 4) * i,
+            .int_end = a + ((b - a) / 4) * (i + 1),
+            .point_amount = 5000000
+        };
 
-    if (errno = pthread_create(&thread_id1, NULL, ThreadIntegrate, &thread_args1)) {
+        int_args[i] = i_arg;
+
+        thread_arg_t t_args = {
+            .integrate_arg = int_args + i,
+            .workarea_arg = &workarea
+        };
+
+        thread_args[i] = t_args;
+    }
+
+    pthread_t thread_id1;
+    pthread_t thread_id2;
+    pthread_t thread_id3;
+    pthread_t thread_id4;
+
+    if (errno = pthread_create(&thread_id1, NULL, ThreadIntegrate, thread_args)) {
         perror("pthread_create");
         return 1;
     }
-    if (errno = pthread_create(&thread_id2, NULL, ThreadIntegrate, &thread_args2)) {
+    if (errno = pthread_create(&thread_id2, NULL, ThreadIntegrate, thread_args + 1)) {
+        perror("pthread_create");
+        return 1;
+    }
+    if (errno = pthread_create(&thread_id3, NULL, ThreadIntegrate, thread_args + 2)) {
+        perror("pthread_create");
+        return 1;
+    }
+    if (errno = pthread_create(&thread_id4, NULL, ThreadIntegrate, thread_args + 3)) {
         perror("pthread_create");
         return 1;
     }
@@ -164,11 +196,20 @@ int main(int argc, char* argv[]) {
     // wait for a thread [thread_id]
     pthread_join(thread_id1, NULL);
     pthread_join(thread_id2, NULL);
+    pthread_join(thread_id3, NULL);
+    pthread_join(thread_id4, NULL);
 
     printf("result = %lf\n", workarea.sum);
 
     return 0;
 }
+
+//! разделяю интегрирование на 4 потока, но программа с потоками работает в 4 раза медленнее
+//! чем программа без потоков
+//! вероятно это связано с большими затратами на системные вызовы и преимущество будет заметно
+//! при больших промежутках и/или на более сложных подинтегральных функциях
+
+//! подумать, как уменьшить накладные расходы:: calloc -> придумать, как генерить аргументы для потоков
 
 //* threads:
 //? pthread_exit()

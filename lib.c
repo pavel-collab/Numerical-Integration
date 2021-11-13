@@ -38,7 +38,7 @@ double Rec(const double x_1, const double x_2, const unsigned N) {
     return sum;
 }
 
-double Trapez(const double x_1, const double x_2, const unsigned N) {
+double Trapez(const double x_1, const double x_2, const unsigned N, double (*f)(double)) {
     double sum = 0;
     double d = (x_2 - x_1) / N;
     for (unsigned i = 0; i < N; i++) {

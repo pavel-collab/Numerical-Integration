@@ -2,7 +2,9 @@
 sandbox*
 *.log
 out
-tmp.*
+*.so
 *.o
 a.out
+
 gnuplot
+simple_int
