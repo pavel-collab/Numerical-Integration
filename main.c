@@ -28,7 +28,7 @@ void* ThreadIntegrate(void* arg) {
 
     int N = args->integrate_arg->point_amount;
 
-    // double sum = 0;
+    double local_sum = 0;
     
     double d = (x_2 - x_1) / N;
 
@@ -36,10 +36,14 @@ void* ThreadIntegrate(void* arg) {
         double a = x_1 + i * d;
         double b = x_1 + (i + 1) * d;
 
-        pthread_mutex_lock(&args->workarea_arg->g_mutex);
-        args->workarea_arg->sum += 0.5 * (f(a) + f(b)) * d;
-        pthread_mutex_unlock(&args->workarea_arg->g_mutex);
+        //! использовать для каждого потока отдельную облать памяти, чтобы нити не ждали друг друга
+        //! конечный результат складывать в основном потоке
+        local_sum += 0.5 * (f(a) + f(b)) * d;
     }
+
+    pthread_mutex_lock(&args->workarea_arg->g_mutex);
+    args->workarea_arg->sum += local_sum;
+    pthread_mutex_unlock(&args->workarea_arg->g_mutex);
 
     printf("thread has been compleated\n");
     return NULL;
