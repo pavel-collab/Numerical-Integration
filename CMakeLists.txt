@@ -4,6 +4,9 @@ cmake_minimum_required (VERSION 3.11)
 # PROJECT PROPERTIES
 project ("Integration" LANGUAGES C CXX)
 
+# THE 17TH STANDART
+set(CMAKE_CXX_STANDARD 17)
+
 # EXECUTABLE FILE PROPERTIES
 set(MAIN                  "main")
 set(GNUPLOT_CALL          "gnuplot_call")
