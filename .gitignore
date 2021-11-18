@@ -5,6 +5,7 @@ out
 *.so
 *.o
 a.out
+build
 
 gnuplot
 long_time_integrate
