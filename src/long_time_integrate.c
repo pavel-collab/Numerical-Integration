@@ -1,20 +1,26 @@
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <dlfcn.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
-#include <stdlib.h>
 
 #include "lib.h"
 
 int main(int argc, char* argv[]) {
-
+    
     if (argc != 4) {
         printf("Usage: %s <integration limits> <function(x)>\n", argv[0]);
         return -1;
     } 
+
+    // integration limits
+    double a = atof(argv[1]);
+    double b = atof(argv[2]);
+
+    // ===========================================================================================
 
     // create pipe to manage gcc from current programm
     int gcc_pipe[2];
@@ -51,7 +57,7 @@ int main(int argc, char* argv[]) {
                 // link with linkm
                 "-lm", 
                 // save output to ymp.so
-                "-o", "tmp1.so", NULL);
+                "-o", "tmp.so", NULL);
         perror("exec");
         return 1;
     }
@@ -74,7 +80,7 @@ int main(int argc, char* argv[]) {
 
     // Try to load compiled library
 
-    void* tmplib = dlopen("./tmp1.so", RTLD_LAZY);
+    void* tmplib = dlopen("./tmp.so", RTLD_LAZY);
     char* dlerrstr;
     if (!tmplib) {
         perror(dlerror());
@@ -89,8 +95,9 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    printf("answer = %lf\n", Trapez(atof(argv[1]), atof(argv[2]), 500000*4, tmpfun));
+    // ===========================================================================================
 
-
+    printf("simple integrate rusult: %f\n", Trapez(a, b, 4 * 5000000, tmpfun));
+    
     return 0;
 }
