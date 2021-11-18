@@ -10,7 +10,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-//TODO: лютый рефактор
 //TODO: уменьшить накладные расходы
 //TODO: переименовать функции, переменные и файлы
 
@@ -19,33 +18,28 @@
 // main-function for a thread
 void* ThreadIntegrate(void* arg) {
 
-    thread_arg_t* args = (thread_arg_t*) arg;
+    arg_t* args = (arg_t*) arg;
 
-    double (*f)(double) = args->integrate_arg->function;
+    double (*f)(double) = args->function;
+    double x_1 = args->int_begin;
+    double x_2 = args->int_end;
 
-    double x_1 = args->integrate_arg->int_begin;
-    double x_2 = args->integrate_arg->int_end;
-
-    int N = args->integrate_arg->point_amount;
+    int N = args->point_amount;
 
     double local_sum = 0;
-    
     double d = (x_2 - x_1) / N;
 
     for (unsigned i = 0; i < N; i++) {
         double a = x_1 + i * d;
         double b = x_1 + (i + 1) * d;
 
-        //! использовать для каждого потока отдельную облать памяти, чтобы нити не ждали друг друга
-        //! конечный результат складывать в основном потоке
         local_sum += 0.5 * (f(a) + f(b)) * d;
     }
 
-    pthread_mutex_lock(&args->workarea_arg->g_mutex);
-    args->workarea_arg->sum += local_sum;
-    pthread_mutex_unlock(&args->workarea_arg->g_mutex);
+    pthread_mutex_lock(&args->g_mutex);
+    *(args->sum) += local_sum;
+    pthread_mutex_unlock(&args->g_mutex);
 
-    printf("thread has been compleated\n");
     return NULL;
 }
 
@@ -55,6 +49,11 @@ int main(int argc, char* argv[]) {
         printf("Usage: %s <integration limits> <function(x)>\n", argv[0]);
         return -1;
     } 
+
+    // количество потоков
+    int thread_amount = 4;
+
+    // ===========================================================================================
 
     // create pipe to manage gcc from current programm
     int gcc_pipe[2];
@@ -104,7 +103,6 @@ int main(int argc, char* argv[]) {
             "}\n", argv[3]);
     close(gcc_pipe[1]);
 
-    //! большое время ожидания может быть здесь, пока родиель ждет завершения работы ребенка
     int status;
     waitpid(my_id, &status, 0);
 
@@ -132,47 +130,27 @@ int main(int argc, char* argv[]) {
 
     // ===========================================================================================
 
-    // for all threads
-    workarea_t workarea =  {
-        .g_mutex = PTHREAD_MUTEX_INITIALIZER,
-        .sum = 0
-    };
-
     // integration limits
     double a = atof(argv[1]);
     double b = atof(argv[2]);
 
-    // allocate memory for arrays of arguments
-    thread_arg_t* thread_args = (thread_arg_t*) calloc(4, sizeof(thread_arg_t));
-    if (thread_args == NULL) {
-        perror("calloc");
-        return -1;
-    }
+    volatile double main_sum = 0;
 
-    integrate_t* int_args = (integrate_t*) calloc(4, sizeof(integrate_t));
-    if (int_args == NULL) {
-        perror("calloc");
-        return -1;
-    }
+    //! выделим массив структур на куче (возможно, не лучшая идея, подумать над этим)
+    arg_t* thread_args = (arg_t*) calloc(thread_amount, sizeof(arg_t));
 
-    // in loop define arrays of qrgs
-    for (int i = 0; i < 4; i++) {
-        integrate_t i_arg = {
+    // в цикле задаем аргументы каждому процессу
+    for (int i = 0; i < thread_amount; i++) {
+        arg_t arg = {
+            .g_mutex = PTHREAD_MUTEX_INITIALIZER,
+            .sum = &main_sum,
             .function = tmpfun,
-
             .int_begin = a + ((b - a) / 4) * i,
             .int_end = a + ((b - a) / 4) * (i + 1),
             .point_amount = 5000000
         };
 
-        int_args[i] = i_arg;
-
-        thread_arg_t t_args = {
-            .integrate_arg = int_args + i,
-            .workarea_arg = &workarea
-        };
-
-        thread_args[i] = t_args;
+        thread_args[i] = arg;
     }
 
     pthread_t thread_id1;
@@ -203,15 +181,10 @@ int main(int argc, char* argv[]) {
     pthread_join(thread_id3, NULL);
     pthread_join(thread_id4, NULL);
 
-    printf("result = %lf\n", workarea.sum);
+    printf("result = %lf\n", main_sum);
 
     return 0;
 }
-
-//! разделяю интегрирование на 4 потока, но программа с потоками работает в 4 раза медленнее
-//! чем программа без потоков
-//! вероятно это связано с большими затратами на системные вызовы и преимущество будет заметно
-//! при больших промежутках и/или на более сложных подинтегральных функциях
 
 //! подумать, как уменьшить накладные расходы:: calloc -> придумать, как генерить аргументы для потоков
 
@@ -219,11 +192,9 @@ int main(int argc, char* argv[]) {
 //? pthread_exit()
 
 //TODO: CMake
-//TODO: другие способы синхронизации нитей
 
 //TODO: соединить программу с использованием gnuplot
 // --------------------------------------------------------------------------------------------
-//TODO: using the threads to make the pragramm faster
 //TODO: compare the speed of programm working with threads and without ones
 //TODO: unit tests 
 

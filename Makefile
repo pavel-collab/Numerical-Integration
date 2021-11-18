@@ -20,4 +20,4 @@ simple_int: simple_int.c
 	gcc -o simple_int -Wall -Wextra lib.c simple_int.c -ldl
 
 clear:
-	rm *.o a.out
+	rm *.o a.out *.so
