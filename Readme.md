@@ -5,7 +5,16 @@ mkdir build && cd build
 cmake ..
 make
 ```
-After that you can run the executable file you need.
+After that you can run the executable file you need.  
+You also can build each target separately:
+```
+make <target>
+```
+Avaliable targets:
+* main
+* gnuplot_call
+* test
+* long_time_integration
 
 ## Методы численного интегрирования
 
