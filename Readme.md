@@ -1,3 +1,12 @@
+## Build
+Instruction how to build the project
+```
+mkdir build && cd build
+cmake ..
+make
+```
+After that you can run the executable file you need.
+
 ## Методы численного интегрирования
 
 ### Метод правых прямоугольников
