@@ -3,7 +3,7 @@ C_FLAGS=-Werror -Wall -Wextra -Wnarrowing
 # флаги оптимизации
 C_OPTIMIZE_FLAGS=-O2 -flto -fomit-frame-pointer
 
-all: main
+all: main long_time_integrate
 
 main.o: main.c
 	gcc -c main.c
@@ -16,8 +16,8 @@ main: lib.o main.o
 gnuplot: gnuplot_call.c
 	gcc -o gnuplot -Wall -Wextra gnuplot_call.c -ldl
 
-simple_int: simple_int.c
-	gcc -o simple_int -Wall -Wextra lib.c simple_int.c -ldl
+long_time_integrate: long_time_integrate.c
+	gcc -o long_time_integrate -Wall -Wextra lib.c long_time_integrate.c -ldl
 
 clear:
 	rm *.o a.out *.so
