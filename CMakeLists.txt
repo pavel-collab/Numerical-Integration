@@ -23,8 +23,8 @@ set(HEADERS
 set(SRC_MAIN src/main.c)
 set(SRC_LONG_TIME_INTEGRATION src/long_time_integrate.c)
 set(SRC_GNUPLOT_CALL src/gnuplot_call.c)
-set(SRC_LIB src/lib.c)
 set(SRC_TEST tests/test.cpp)
+set(SRC_LIB src/lib.c)
 
 # EXECUTABLES
 add_executable(${MAIN} ${SRC_MAIN} ${SRC_LIB})
