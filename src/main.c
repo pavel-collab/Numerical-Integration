@@ -22,8 +22,17 @@ int main(int argc, char* argv[]) {
         return -1;
     } 
 
+    // integration limits
+    double a = atof(argv[1]);
+    double b = atof(argv[2]);
+    
     // количество потоков
     int thread_amount = 4;
+
+    //! отличная идея, но требует доработки
+    //! возможно, рост количества потоков должен быть нелинейным
+    // thread_amount = ((b - a) / 250000 > 1) ? trunc((b - a) / 250000) : 1;
+    // printf("thread_amount = %d\n", thread_amount);
 
     // ===========================================================================================
 
@@ -101,10 +110,6 @@ int main(int argc, char* argv[]) {
     }
 
     // ===========================================================================================
-
-    // integration limits
-    double a = atof(argv[1]);
-    double b = atof(argv[2]);
 
     volatile double main_sum = 0;
 

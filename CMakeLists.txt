@@ -34,7 +34,7 @@ add_executable(${LONG_TIME_INTEGRATION} ${SRC_LONG_TIME_INTEGRATION} ${SRC_LIB})
 add_executable(${TEST} ${SRC_TEST})
 
 # TARGETS LINK LIBRARIES
-target_link_libraries(${MAIN} "dl" "pthread" ${CMAKE_DL_LIBS})
+target_link_libraries(${MAIN} "dl" "pthread" "m" ${CMAKE_DL_LIBS})
 target_link_libraries(${GNUPLOT_CALL} "dl" ${CMAKE_DL_LIBS})
 target_link_libraries(${LONG_TIME_INTEGRATION} "dl" ${CMAKE_DL_LIBS})
 
