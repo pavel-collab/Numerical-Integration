@@ -15,34 +15,6 @@
 
 #include "lib.h"
 
-// main-function for a thread
-void* ThreadIntegrate(void* arg) {
-
-    arg_t* args = (arg_t*) arg;
-
-    double (*f)(double) = args->function;
-    double x_1 = args->int_begin;
-    double x_2 = args->int_end;
-
-    int N = args->point_amount;
-
-    double local_sum = 0;
-    double d = (x_2 - x_1) / N;
-
-    for (unsigned i = 0; i < N; i++) {
-        double a = x_1 + i * d;
-        double b = x_1 + (i + 1) * d;
-
-        local_sum += 0.5 * (f(a) + f(b)) * d;
-    }
-
-    pthread_mutex_lock(&args->g_mutex);
-    *(args->sum) += local_sum;
-    pthread_mutex_unlock(&args->g_mutex);
-
-    return NULL;
-}
-
 int main(int argc, char* argv[]) {
 
     if (argc != 4) {
@@ -50,8 +22,17 @@ int main(int argc, char* argv[]) {
         return -1;
     } 
 
+    // integration limits
+    double a = atof(argv[1]);
+    double b = atof(argv[2]);
+    
     // количество потоков
     int thread_amount = 4;
+
+    //! отличная идея, но требует доработки
+    //! возможно, рост количества потоков должен быть нелинейным
+    // thread_amount = ((b - a) / 250000 > 1) ? trunc((b - a) / 250000) : 1;
+    // printf("thread_amount = %d\n", thread_amount);
 
     // ===========================================================================================
 
@@ -130,14 +111,11 @@ int main(int argc, char* argv[]) {
 
     // ===========================================================================================
 
-    // integration limits
-    double a = atof(argv[1]);
-    double b = atof(argv[2]);
-
     volatile double main_sum = 0;
 
     //! выделим массив структур на куче (возможно, не лучшая идея, подумать над этим)
-    arg_t* thread_args = (arg_t*) calloc(thread_amount, sizeof(arg_t));
+    // arg_t* thread_args = (arg_t*) calloc(thread_amount, sizeof(arg_t));
+    arg_t thread_args[thread_amount];
 
     // в цикле задаем аргументы каждому процессу
     for (int i = 0; i < thread_amount; i++) {
@@ -145,41 +123,27 @@ int main(int argc, char* argv[]) {
             .g_mutex = PTHREAD_MUTEX_INITIALIZER,
             .sum = &main_sum,
             .function = tmpfun,
-            .int_begin = a + ((b - a) / 4) * i,
-            .int_end = a + ((b - a) / 4) * (i + 1),
+            .int_begin = a + ((b - a) / thread_amount) * i,
+            .int_end = a + ((b - a) / thread_amount) * (i + 1),
             .point_amount = 5000000
         };
 
         thread_args[i] = arg;
     }
 
-    pthread_t thread_id1;
-    pthread_t thread_id2;
-    pthread_t thread_id3;
-    pthread_t thread_id4;
+    pthread_t thread_id[thread_amount]; 
 
-    if (errno = pthread_create(&thread_id1, NULL, ThreadIntegrate, thread_args)) {
-        perror("pthread_create");
+    for (int i = 0; i < thread_amount; ++i) {
+        if (errno = pthread_create(&thread_id[i], NULL, ThrTrapez, &thread_args[i])) {
+            perror("pthread_create");
         return 1;
     }
-    if (errno = pthread_create(&thread_id2, NULL, ThreadIntegrate, thread_args + 1)) {
-        perror("pthread_create");
-        return 1;
-    }
-    if (errno = pthread_create(&thread_id3, NULL, ThreadIntegrate, thread_args + 2)) {
-        perror("pthread_create");
-        return 1;
-    }
-    if (errno = pthread_create(&thread_id4, NULL, ThreadIntegrate, thread_args + 3)) {
-        perror("pthread_create");
-        return 1;
     }
 
     // wait for a thread [thread_id]
-    pthread_join(thread_id1, NULL);
-    pthread_join(thread_id2, NULL);
-    pthread_join(thread_id3, NULL);
-    pthread_join(thread_id4, NULL);
+    for (int i = 0; i < thread_amount; ++i) {
+        pthread_join(thread_id[i], NULL);
+    }
 
     printf("result = %lf\n", main_sum);
 
