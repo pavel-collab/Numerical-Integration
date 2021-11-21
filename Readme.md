@@ -16,6 +16,13 @@ Avaliable targets:
 * test
 * long_time_integration
 
+## TEST MODE
+If you want switch programm to test mode, you need to uncomment #define TEST_MODE; in files main and long time integration. Then you have to buld the project again. After that you can use bush script:
+
+```
+for i in ../tests/*.dat; do echo '=============================='; time ./main < $i; done
+```
+
 ## Методы численного интегрирования
 
 ### Метод правых прямоугольников

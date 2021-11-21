@@ -1,4 +1,5 @@
 //* /usr/bin/time -o time.log --verbose ./out
+// #define TEST_MODE
 
 #include <errno.h>
 #include <stdio.h>
@@ -17,6 +18,7 @@
 
 int main(int argc, char* argv[]) {
 
+    #ifndef TEST_MODE
     if (argc != 4) {
         printf("Usage: %s <integration limits> <function(x)>\n", argv[0]);
         return -1;
@@ -25,6 +27,13 @@ int main(int argc, char* argv[]) {
     // integration limits
     double a = atof(argv[1]);
     double b = atof(argv[2]);
+    #else
+    double a = 0;
+    double b = 0;
+
+    scanf("%lf %lf", &a, &b);
+    printf("%lf %lf\n", a, b);
+    #endif
     
     // количество потоков
     int thread_amount = 4;
@@ -77,11 +86,22 @@ int main(int argc, char* argv[]) {
     }
 
     // write an instruction for a dynamic lib
+    #ifndef TEST_MODE
     dprintf(gcc_pipe[1],
             "#include <math.h>\n"
                 "double tmpfun(double x) {"
                 "return %s;"
             "}\n", argv[3]);
+    #else
+    char function[20];
+    scanf("%s", function);
+    printf("function : %s\n", function);
+    dprintf(gcc_pipe[1],
+            "#include <math.h>\n"
+                "double tmpfun(double x) {"
+                "return %s;"
+            "}\n", function);
+    #endif
     close(gcc_pipe[1]);
 
     int status;
