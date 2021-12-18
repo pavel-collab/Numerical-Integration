@@ -1,5 +1,4 @@
 //* /usr/bin/time -o time.log --verbose ./out
-// #define TEST_MODE
 
 #include <errno.h>
 #include <stdio.h>
@@ -18,7 +17,6 @@
 
 int main(int argc, char* argv[]) {
 
-    #ifndef TEST_MODE
     if (argc != 4) {
         printf("Usage: %s <integration limits> <function(x)>\n", argv[0]);
         return -1;
@@ -27,13 +25,6 @@ int main(int argc, char* argv[]) {
     // integration limits
     double a = atof(argv[1]);
     double b = atof(argv[2]);
-    #else
-    double a = 0;
-    double b = 0;
-
-    scanf("%lf %lf", &a, &b);
-    printf("%lf %lf\n", a, b);
-    #endif
     
     // количество потоков
     int thread_amount = 4;
@@ -86,22 +77,12 @@ int main(int argc, char* argv[]) {
     }
 
     // write an instruction for a dynamic lib
-    #ifndef TEST_MODE
     dprintf(gcc_pipe[1],
             "#include <math.h>\n"
                 "double tmpfun(double x) {"
                 "return %s;"
             "}\n", argv[3]);
-    #else
-    char function[20];
-    scanf("%s", function);
-    printf("function : %s\n", function);
-    dprintf(gcc_pipe[1],
-            "#include <math.h>\n"
-                "double tmpfun(double x) {"
-                "return %s;"
-            "}\n", function);
-    #endif
+
     close(gcc_pipe[1]);
 
     int status;
@@ -132,29 +113,26 @@ int main(int argc, char* argv[]) {
     // ===========================================================================================
 
     volatile double main_sum = 0;
+    // mutex init
+    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-    //! выделим массив структур на куче (возможно, не лучшая идея, подумать над этим)
-    // arg_t* thread_args = (arg_t*) calloc(thread_amount, sizeof(arg_t));
     arg_t thread_args[thread_amount];
 
     // в цикле задаем аргументы каждому процессу
     for (int i = 0; i < thread_amount; i++) {
-        arg_t arg = {
-            .g_mutex = PTHREAD_MUTEX_INITIALIZER,
-            .sum = &main_sum,
-            .function = tmpfun,
-            .int_begin = a + ((b - a) / thread_amount) * i,
-            .int_end = a + ((b - a) / thread_amount) * (i + 1),
-            .point_amount = 5000000
-        };
-
-        thread_args[i] = arg;
+        thread_args[i].g_mutex = mutex;
+        thread_args[i].sum = &main_sum;
+        thread_args[i].function = tmpfun;
+        thread_args[i].int_begin = a + ((b - a) / thread_amount) * i;
+        thread_args[i].int_end = a + ((b - a) / thread_amount) * (i + 1);
+        thread_args[i].point_amount = 5000000;
     }
 
     pthread_t thread_id[thread_amount]; 
 
     for (int i = 0; i < thread_amount; ++i) {
         if (errno = pthread_create(&thread_id[i], NULL, ThrTrapez, &thread_args[i])) {
+            //! прибивать потоки и чистить ресурсы в случае аварийной остановки программы
             perror("pthread_create");
         return 1;
     }
