@@ -13,7 +13,7 @@ make <target>
 Avaliable targets:
 * main
 * gnuplot_call
-* test
+* runUnitTests
 * long_time_integration
 
 ## TEST MODE
