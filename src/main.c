@@ -147,20 +147,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
-//! подумать, как уменьшить накладные расходы:: calloc -> придумать, как генерить аргументы для потоков
-
-//* threads:
-//? pthread_exit()
-
-//TODO: CMake
-
-//TODO: соединить программу с использованием gnuplot
-// --------------------------------------------------------------------------------------------
-//TODO: compare the speed of programm working with threads and without ones
-//TODO: unit tests 
-
-//TODO: придумать, как реализовать идею с коэффициентом точности
-
-//* computering numerical value of integral by the threads
-//* use the main thread to make a plot (using gnuplot call)

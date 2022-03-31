@@ -1,0 +1,1 @@
+for i in ./test_collection/*.dat; do echo '=============================='; time cat $i | xargs ../build/long_time_integration; done
