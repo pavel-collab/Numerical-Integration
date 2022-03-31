@@ -1,3 +1,7 @@
+## О программе
+
+Основная программа получает на вход пределы интегрирования и подинтегральную функцию, после чего вычисляет численное значение интеграла в заданных пределах используя при этом несколько потоков. Потоки синхронизированы между собой с помощью мьютекса.
+
 ## Структура проекта
 - include
     - lib.h -- содержит описание использующихся структур и функций
@@ -26,6 +30,13 @@ Avaliable targets:
 * gnuplot_call
 * runUnitTests
 * long_time_integration
+
+Формат запуска:
+```
+./main 0 1 "sin(x)"
+./gnuplot_call "sin(x)"
+./runUnitTests
+```
 
 ## TEST MODE
 If you want switch programm to test mode, you need to uncomment #define TEST_MODE; in file long time integration. Then you have to buld the project again. After that checkout to the directory tests/ where you will find file _test.sh_.
