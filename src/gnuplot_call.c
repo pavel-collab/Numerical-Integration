@@ -10,7 +10,7 @@
 int main(int argc, char* argv[]) {
 
     if (argc != 2) {
-        printf("Usage: %s <function(x)>\n", argv[0]);
+        printf("Usage: %s \"<function(x)>\"\n", argv[0]);
         return -1;
     }
 
@@ -91,13 +91,8 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------------------------------------------------
 
     // Try ro use it
-
     FILE* plot_pipe = popen("gnuplot -persist", "w");
 
-    /* save plot in picture result.png in ./inages */
-
-    // fputs("set terminal png size 800, 600\n", plot_pipe);
-    // fputs("set output './images/result.png'\n", plot_pipe);
 
     fputs("set xlabel 'X'\n", plot_pipe);
     fputs("set ylabel 'Y'\n", plot_pipe);
@@ -109,7 +104,7 @@ int main(int argc, char* argv[]) {
     fputs("plot '-' w line\n", plot_pipe);
 
     for (int i = -1024; i < 1024; i++) {
-        double x = i * M_PI/256;
+        double x = i * 3.14159265/256;
         fprintf(plot_pipe, "%lf %lf\n", x, (*tmpfun)(x));
     }
 

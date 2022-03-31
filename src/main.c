@@ -18,7 +18,7 @@
 int main(int argc, char* argv[]) {
 
     if (argc != 4) {
-        printf("Usage: %s <integration limits> <function(x)>\n", argv[0]);
+        printf("Usage: %s <integration limits> \"<function(x)>\"\n", argv[0]);
         return -1;
     } 
 

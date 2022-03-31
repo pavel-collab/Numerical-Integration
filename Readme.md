@@ -20,5 +20,5 @@ Avaliable targets:
 If you want switch programm to test mode, you need to uncomment #define TEST_MODE; in files main and long time integration. Then you have to buld the project again. After that you can use bush script:
 
 ```consol
-for i in ../tests/*.dat; do echo '=============================='; time cat $i | xargs ./main; done
+for i in ../tests/test_collection/*.dat; do echo '=============================='; time cat $i | xargs ./long_time_integration; done
 ```
