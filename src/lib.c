@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "lib.h"
+#include "../include/lib.h"
 
 double RightRec(const double x_1, const double x_2, const unsigned N, double (*f)(double)) {
     double sum = 0;
@@ -32,7 +32,7 @@ double Rec(const double x_1, const double x_2, const unsigned N, double (*f)(dou
     return sum;
 }
 
-double Trapez(const double x_1, const double x_2, const unsigned N, double (*f)(double)) {
+double Trapez(const double x_1, const double x_2, long int N, double (*f)(double)) {
     double sum = 0;
     double d = (x_2 - x_1) / N;
     for (unsigned i = 0; i < N; i++) {

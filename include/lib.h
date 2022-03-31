@@ -20,7 +20,7 @@ double LeftRec(const double x_1, const double x_2, const unsigned N, double (*f)
 
 double Rec(const double x_1, const double x_2, const unsigned N, double (*f)(double));
 
-double Trapez(const double x_1, const double x_2, const unsigned N, double (*f)(double));
+double Trapez(const double x_1, const double x_2, const long int N, double (*f)(double));
 
 double Sympson(const double x_1, const double x_2, const unsigned N, double (*f)(double));
 

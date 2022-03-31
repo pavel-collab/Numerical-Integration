@@ -13,7 +13,6 @@ set(GNUPLOT_CALL          "gnuplot_call")
 set(TEST                  "test")
 set(LONG_TIME_INTEGRATION "long_time_integration")
 
-# непонятно, зачем?
 set(HEADERS
     include/lib.h
     include/catch.hpp
@@ -24,6 +23,7 @@ set(SRC_MAIN src/main.c)
 set(SRC_LONG_TIME_INTEGRATION src/long_time_integrate.c)
 set(SRC_GNUPLOT_CALL src/gnuplot_call.c)
 set(SRC_TEST tests/test.cpp)
+set(SRC_GTEST tests/gtest.cpp)
 set(SRC_LIB src/lib.c)
 
 # EXECUTABLES
@@ -42,6 +42,15 @@ target_link_libraries(${LONG_TIME_INTEGRATION} "dl" ${CMAKE_DL_LIBS})
 target_include_directories(${MAIN}                  PRIVATE include src)
 target_include_directories(${TEST}                  PRIVATE include tests)
 target_include_directories(${LONG_TIME_INTEGRATION} PRIVATE include src)
+
+################################
+# Unit Tests
+################################
+# Add test cpp file
+add_executable(runUnitTests ${SRC_GTEST})
+# Link test executable against gtest & gtest_main
+target_link_libraries(runUnitTests gtest gtest_main pthread)
+add_test(runUnitTests runUnitTests)
 
 add_compile_options(
     -Werror

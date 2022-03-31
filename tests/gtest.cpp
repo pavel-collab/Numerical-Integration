@@ -1,9 +1,7 @@
-#define CATCH_CONFIG_MAIN
 #include <iostream>
-
-#include "catch.hpp"
-#include "lib.h"
+#include "../include/lib.h"
 #include <cmath>
+#include <gtest/gtest.h>
 
 double f(double x) {
     return x;
@@ -21,119 +19,99 @@ double Rec(const double x_1, const double x_2, const unsigned N, double (*f)(dou
 double Trapez(const double x_1, const double x_2, long int N, double (*f)(double));
 double Sympson(const double x_1, const double x_2, const unsigned N, double (*f)(double));
 
-// --------------------------------------------------------------------------------------------
-
-TEST_CASE("Right rectangular") {
+TEST(NumericalIntegration, RightRec)
+{
     double sum = RightRec(0, 1, 1000000, f);
-
-    // точность -- 3 знака после запятой
     sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 0.5);
+    ASSERT_EQ(sum, 0.5);
 }
 
-TEST_CASE("Left rectangular") {
+TEST(NumericalIntegration, LeftRec) {
     double sum = LeftRec(0, 1, 1000000, f);
     sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 0.5);
+    ASSERT_EQ(sum, 0.5);
 }
 
-TEST_CASE("Trapez") {
+TEST(NumericalIntegration, Trapez) {
     double sum = Trapez(0, 1, 1000000, f);
     sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 0.5);
+    ASSERT_EQ(sum, 0.5);
 }
 
-TEST_CASE("Sympson method") {
+TEST(NumericalIntegration, Sympson_method) {
     double sum = Sympson(0, 1, 1000000, f);
     sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 0.5);
+    ASSERT_EQ(sum, 0.5);
 }
 
 // --------------------------------------------------------------------------------------------
 // Trapez
 
-TEST_CASE("Sin") {
+TEST(NumericalIntegration, Sin) {
     double sum = Trapez(0, 1.570796, 1000000, sin);
     sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 1.0);
+    ASSERT_EQ(sum, 1.0);
 }
 
-TEST_CASE("Tan") {
-    double sum = Trapez(0, 1000, 1000000, tan);
-    sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 272.002);
-}
-
-TEST_CASE("Log") {
+TEST(NumericalIntegration, Log) {
     double sum = Trapez(1, 10, 100000000, log);
     sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 14.025);
+    ASSERT_EQ(sum, 14.026);
 }
 
-TEST_CASE("1/x") {
+TEST(NumericalIntegration, Garmonical_function) {
     double sum = Trapez(1, 200000, 100000000, g);
     sum = round(sum * 1000) / 1000;
-    REQUIRE(sum == 12.206);
+    ASSERT_EQ(sum, 12.206);
 }
 
-TEST_CASE("Exp") {
-    double sum = Trapez(0, 10, 1000000, exp);
-    sum = round(sum * 100) / 100;
-    REQUIRE(sum == 22025.46);
+TEST(NumericalIntegration, Exp) {
+    double sum = Trapez(0, 10, 1000000000, exp);
+    sum = round(sum * 10) / 10;
+    ASSERT_EQ(sum, 22025.5);
 }
 
-TEST_CASE("Sqrt") {
+TEST(NumericalIntegration, Sqrt) {
     double sum = Trapez(0.004, 1001, 10000000, sqrt);
     sum = round(sum * 100) / 100;
-    REQUIRE(sum == 21113.48);
+    ASSERT_EQ(sum, 21113.48);
 }
 
-TEST_CASE("Asinh") {
+TEST(NumericalIntegration, Asinh) {
     double sum = Trapez(0, 10, 1000000, asinh);
     sum = round(sum * 100) / 100;
-    REQUIRE(sum == 20.93);
+    ASSERT_EQ(sum, 20.93);
 }
 
 // --------------------------------------------------------------------------------------------
 // Trapez Laplass function
 
-TEST_CASE("Laplass t = 0.05") {
+TEST(NumericalIntegration, Laplass) {
     double sum = Trapez(0, 0.05, 1000000, Laplass);
     sum = round(sum * 10000) / 10000;
-    REQUIRE(sum == 0.0199);
-}
+    ASSERT_EQ(sum, 0.0199);
 
-TEST_CASE("Laplass t = 0.21") {
-    double sum = Trapez(0, 0.21, 1000000, Laplass);
+    sum = Trapez(0, 0.21, 1000000, Laplass);
     sum = round(sum * 10000) / 10000;
-    REQUIRE(sum == 0.0832);
-}
+    ASSERT_EQ(sum, 0.0832);
 
-TEST_CASE("Laplass t = 0.42") {
-    double sum = Trapez(0, 0.42, 10000000, Laplass);
+    sum = Trapez(0, 0.42, 10000000, Laplass);
     sum = round(sum * 10000) / 10000;
-    REQUIRE(sum == 0.1628);
-}
+    ASSERT_EQ(sum, 0.1628);
 
-TEST_CASE("Laplass t = 0.91") {
-    double sum = Trapez(0, 0.91, 10000000, Laplass);
+    sum = Trapez(0, 0.91, 10000000, Laplass);
     sum = round(sum * 10000) / 10000;
-    REQUIRE(sum == 0.3186);
-}
+    ASSERT_EQ(sum, 0.3186);
 
-TEST_CASE("Laplass t = 1.15") {
-    double sum = Trapez(0, 1.15, 10000000, Laplass);
+    sum = Trapez(0, 1.15, 10000000, Laplass);
     sum = round(sum * 10000) / 10000;
-    REQUIRE(sum == 0.3749);
-}
+    ASSERT_EQ(sum, 0.3749);
 
-TEST_CASE("Laplass t = 1.25") {
-    double sum = Trapez(0, 1.25, 10000000, Laplass);
+    sum = Trapez(0, 1.25, 10000000, Laplass);
     sum = round(sum * 10000) / 10000;
-    REQUIRE(sum == 0.3944);
+    ASSERT_EQ(sum, 0.3944);
 }
 
-// ===========================================================================================
 // ===========================================================================================
 
 double RightRec(const double x_1, const double x_2, const unsigned N, double (*f)(double)) {
@@ -165,7 +143,7 @@ double Rec(const double x_1, const double x_2, const unsigned N, double (*f)(dou
     return sum;
 }
 
-double Trapez(const double x_1, const double x_2, const long int N, double (*f)(double)) {
+double Trapez(const double x_1, const double x_2, long int N, double (*f)(double)) {
     double sum = 0;
     double d = (x_2 - x_1) / N;
     for (unsigned i = 0; i < N; i++) {
