@@ -17,7 +17,7 @@
 
 int main(int argc, char* argv[]) {
 
-    if (argc != 4) {
+    if (argc < 4) {
         printf("Usage: %s <integration limits> \"<function(x)>\"\n", argv[0]);
         return -1;
     } 
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     double b = atof(argv[2]);
     
     // количество потоков
-    int thread_amount = 4;
+    int thread_amount = (argc == 5) ? atoi(argv[4]) : 4;
 
     //! отличная идея, но требует доработки
     //! возможно, рост количества потоков должен быть нелинейным
