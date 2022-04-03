@@ -1,27 +1,48 @@
+import readline
 import matplotlib.pyplot as plt
 import numpy as np
 import PythonGraphMod
 
-process_vec = np.arange(2, 21)
-time_collection = np.fromfile('data.dat', sep='\n')
+fd = open('files.dat', 'r')
+measures_data_files = fd.read().splitlines()
+# print(measures_data_files)
+fd.close()
 
-process_vec_dence, time_collection_dence = PythonGraphMod.InterpolateSet(process_vec, time_collection, 'cubic', min(process_vec), max(process_vec))
+process_vec = np.arange(2, 21+1)
+time_value = np.array([])
+
+for file in measures_data_files:
+    # print(file)
+    time_collection = np.fromfile(file, sep='\n')
+    val = np.average(time_collection)
+    time_value = np.append(time_value, val)
+# print(time_value)
+
+process_vec_dence, time_value_dence = PythonGraphMod.InterpolateSet(process_vec, time_value, 'cubic', min(process_vec), max(process_vec))
 
 fig1, ax1 = PythonGraphMod.CreateSimpleGraph()
+fig2, ax2 = PythonGraphMod.CreateSimpleGraph()
 
-ax1.scatter(process_vec, time_collection, color='black', marker='o', s=2, alpha=1)
-ax1.plot(process_vec, time_collection, color='red', alpha=0.75, lw=1.5, ls='--')
-ax1.plot(process_vec_dence, time_collection_dence, color='blue', alpha=0.75, lw=1.5, ls='--')
-ax1.bar(process_vec, time_collection)
+ax1.scatter(process_vec, time_value, color='black', marker='o', s=2, alpha=1)
+ax1.plot(process_vec, time_value, color='red', alpha=0.75, lw=1.5, ls='--')
+ax1.plot(process_vec_dence, time_value_dence, color='blue', alpha=0.75, lw=1.5, ls='--')
+ax2.scatter(process_vec, time_value, color='black', marker='o', s=2, alpha=1)
+ax2.plot(process_vec, time_value, color='red', alpha=0.75, lw=1.5, ls='--')
+ax2.plot(process_vec_dence, time_value_dence, color='blue', alpha=0.75, lw=1.5, ls='--')
+ax1.bar(process_vec, time_value)
 
 # сетка
 ax1.minorticks_on()
 ax1.grid(which = 'major', color = 'black', linewidth = 1, linestyle = '-', alpha = 0.75)
 ax1.grid(which = 'minor', color = 'grey', linewidth = 1, linestyle = '--', alpha = 0.5)
+ax2.minorticks_on()
+ax2.grid(which = 'major', color = 'black', linewidth = 1, linestyle = '-', alpha = 0.75)
+ax2.grid(which = 'minor', color = 'grey', linewidth = 1, linestyle = '--', alpha = 0.5)
 
 # оформление
 plt.ylabel('time (seconds)')
 plt.xlabel('process amount')
 plt.show()
 
-# fig1.savefig("../images/DeltaPsi.pdf")
+fig1.savefig("./images/with_bar.pdf")
+fig2.savefig("./images/without_bar.pdf")
