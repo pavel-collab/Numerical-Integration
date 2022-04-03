@@ -9,3 +9,4 @@ build
 
 gnuplot
 long_time_integrate
+__pycache__

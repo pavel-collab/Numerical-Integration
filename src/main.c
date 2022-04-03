@@ -148,9 +148,14 @@ int main(int argc, char* argv[]) {
     }
 
     #ifdef RESEARCH
+    if (argc != 6) {
+        printf("Error, no file to write data\n");
+        return -1;
+    }
+    char* file_name = argv[5];
     clock_t end = clock();
     double seconds = (double)(end - start) / CLOCKS_PER_SEC;
-    FILE* fd = fopen("../research/data.dat", "ab");
+    FILE* fd = fopen(file_name, "ab");
     if (fd == NULL) {
         printf("Wrong open file\n");
         return -1;

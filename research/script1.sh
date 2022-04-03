@@ -1,9 +1,14 @@
 #! /usr/bin/env bash
 
+process_amount=2
 echo "start test"
 # запускаем цикл
-for ((i = 2; i <= 8; i+=1))
+for file in $(cat files.dat)
 do
-../build/main 0 1 x $i
+    for ((j = 0; j < 20; j+=1))
+    do
+    ../build/main 0 1 x "$process_amount" "$file"
+    done
+    process_amount+=1
 done
 echo "end"
