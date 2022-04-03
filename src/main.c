@@ -1,5 +1,5 @@
 //* /usr/bin/time -o time.log --verbose ./out
-
+#define RESEARCH
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +17,7 @@
 
 int main(int argc, char* argv[]) {
 
-    if (argc != 4) {
+    if (argc < 4) {
         printf("Usage: %s <integration limits> \"<function(x)>\"\n", argv[0]);
         return -1;
     } 
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     double b = atof(argv[2]);
     
     // количество потоков
-    int thread_amount = 4;
+    int thread_amount = (argc == 5) ? atoi(argv[4]) : 2;
 
     //! отличная идея, но требует доработки
     //! возможно, рост количества потоков должен быть нелинейным
@@ -130,6 +130,10 @@ int main(int argc, char* argv[]) {
 
     pthread_t thread_id[thread_amount]; 
 
+    #ifdef RESEARCH
+    clock_t start = clock();
+    #endif
+
     for (int i = 0; i < thread_amount; ++i) {
         if (errno = pthread_create(&thread_id[i], NULL, ThrTrapez, &thread_args[i])) {
             //! прибивать потоки и чистить ресурсы в случае аварийной остановки программы
@@ -143,7 +147,21 @@ int main(int argc, char* argv[]) {
         pthread_join(thread_id[i], NULL);
     }
 
+    #ifdef RESEARCH
+    clock_t end = clock();
+    double seconds = (double)(end - start) / CLOCKS_PER_SEC;
+    FILE* fd = fopen("../research/data.dat", "ab");
+    if (fd == NULL) {
+        printf("Wrong open file\n");
+        return -1;
+    }
+    fprintf(fd, "%lf\n", seconds);
+    fclose(fd);
+    #endif
+
+    #ifndef RESEARCH
     printf("result = %lf\n", main_sum);
+    #endif
 
     return 0;
 }
