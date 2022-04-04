@@ -1,3 +1,4 @@
+#define RESEARCH
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,11 +8,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "mpi.h"
-//* mpic++ mpi.c -o mpi
-//* mpiexec -n 2 ./mpi 
 #include "../include/lib.h"
 
-double f(double x) {return x;}
+//* mpic++ mpi.c -o mpi
+//* mpiexec -n 2 ./mpi 
+double f(double x) {return x*x + sqrt(abs(x));}
 
 int main (int argc, char *argv[])
 {
@@ -44,6 +45,11 @@ int main (int argc, char *argv[])
     MPI_Comm_size (MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank (MPI_COMM_WORLD, &ProcRank);
 
+    #ifdef RESEARCH
+    MPI_Barrier(MPI_COMM_WORLD);
+    double start = MPI_Wtime();
+    #endif
+
     // рассылка данных на все процессы
     MPI_Bcast (buffer, 2, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -66,10 +72,15 @@ int main (int argc, char *argv[])
     }
     else				// все процессы отсылают свои частичные суммы
       MPI_Send (&ProcSum, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
-
     // вывод результата
     if (ProcRank == 0)
-      printf ("\nTotal Sum = %0.2f\n", TotalSum);
+    {
+        printf ("\nTotal Sum = %0.2f\n", TotalSum);
+        #ifdef RESEARCH
+        double end = MPI_Wtime();
+        printf("total time: %lf\n", end - start);
+        #endif
+    }
     MPI_Finalize ();
     return 0;
 }   
