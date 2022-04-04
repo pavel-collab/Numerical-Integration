@@ -1,4 +1,4 @@
-#define RESEARCH
+// #define RESEARCH
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,8 +16,8 @@ double f(double x) {return x*x + sqrt(abs(x));}
 
 int main (int argc, char *argv[])
 {
-    if (argc != 3) {
-        printf("Usage: %s <integration limits>", argv[0]);
+    if (argc < 3) {
+        printf("Usage: %s <integration limits> <file_name>", argv[0]);
         return -1;
     } 
 
@@ -45,10 +45,8 @@ int main (int argc, char *argv[])
     MPI_Comm_size (MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank (MPI_COMM_WORLD, &ProcRank);
 
-    #ifdef RESEARCH
     MPI_Barrier(MPI_COMM_WORLD);
     double start = MPI_Wtime();
-    #endif
 
     // рассылка данных на все процессы
     MPI_Bcast (buffer, 2, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -75,10 +73,21 @@ int main (int argc, char *argv[])
     // вывод результата
     if (ProcRank == 0)
     {
+        #ifndef RESEARCH
+        double end = MPI_Wtime();
         printf ("Total Sum = %0.2f\n", TotalSum);
+        printf("total time: %lf\n", end - start);
+        #endif
         #ifdef RESEARCH
         double end = MPI_Wtime();
-        printf("total time: %lf\n", end - start);
+        if (argc != 4) {
+            perror("no file to write data\n");
+            return -1;
+        }
+        char* filename = argv[3];
+        FILE* fd = fopen(filename, "ab");
+        fprintf(fd, "%lf\n", end - start);
+        fclose(fd);
         #endif
     }
     MPI_Finalize ();
