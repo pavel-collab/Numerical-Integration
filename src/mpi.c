@@ -75,7 +75,7 @@ int main (int argc, char *argv[])
     // вывод результата
     if (ProcRank == 0)
     {
-        printf ("\nTotal Sum = %0.2f\n", TotalSum);
+        printf ("Total Sum = %0.2f\n", TotalSum);
         #ifdef RESEARCH
         double end = MPI_Wtime();
         printf("total time: %lf\n", end - start);
