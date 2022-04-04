@@ -2,7 +2,7 @@
 
 for file in $(cat data_file_list.dat)
 do
-rm "$file"
+# rm "$file"
 touch "$file"
 done
 

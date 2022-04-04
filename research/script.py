@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PythonGraphMod
 
-ProcessAmount = 21
+ProcessAmount = 101
 
 fd = open('data_file_list.dat', 'r')
 measures_data_files = fd.read().splitlines()
