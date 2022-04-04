@@ -3,28 +3,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PythonGraphMod
 
-fd = open('files.dat', 'r')
+ProcessAmount = 21
+
+fd = open('data_file_list.dat', 'r')
 measures_data_files = fd.read().splitlines()
 # print(measures_data_files)
 fd.close()
 
-process_vec = np.arange(2, 21+1)
+process_vec = np.arange(2, ProcessAmount+1)
 time_value = np.array([])
+time_var = np.array([]) # дисперсия
 
 for file in measures_data_files:
     # print(file)
     time_collection = np.fromfile(file, sep='\n')
     val = np.average(time_collection)
+    var = np.var(time_collection)
     time_value = np.append(time_value, val)
-# print(time_value)
+    time_var = np.append(time_var, var)
+# print(time_var)
 
 process_vec_dence, time_value_dence = PythonGraphMod.InterpolateSet(process_vec, time_value, 'cubic', min(process_vec), max(process_vec))
 
 fig1, ax1 = PythonGraphMod.CreateSimpleGraph()
 fig2, ax2 = PythonGraphMod.CreateSimpleGraph()
 
+plt.errorbar(process_vec, time_value, yerr=time_var, fmt='.', ecolor='black', color='black')
 ax1.scatter(process_vec, time_value, color='black', marker='o', s=2, alpha=1)
-ax1.plot(process_vec, time_value, color='red', alpha=0.75, lw=1.5, ls='--')
 ax1.plot(process_vec_dence, time_value_dence, color='blue', alpha=0.75, lw=1.5, ls='--')
 ax2.scatter(process_vec, time_value, color='black', marker='o', s=2, alpha=1)
 ax2.plot(process_vec, time_value, color='red', alpha=0.75, lw=1.5, ls='--')
