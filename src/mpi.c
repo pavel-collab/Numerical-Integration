@@ -1,4 +1,4 @@
-// #define RESEARCH
+#define RESEARCH
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +12,8 @@
 
 //* mpic++ mpi.c -o mpi
 //* mpiexec -n 2 ./mpi 
-double f(double x) {return x*x + sqrt(abs(x));}
+// double f(double x) {return x*x + sqrt(abs(x));}
+double f(double x) {return 1/x;}
 
 int main (int argc, char *argv[])
 {
@@ -65,12 +66,13 @@ int main (int argc, char *argv[])
     	{
     	  MPI_Recv (&ProcSum, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 0,
     		    MPI_COMM_WORLD, &Status);
-    	  TotalSum = TotalSum + ProcSum;
+    	  TotalSum = TotalSum + ProcSum; // MPI_Reduce
     	}
     }
     else				// все процессы отсылают свои частичные суммы
       MPI_Send (&ProcSum, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
     // вывод результата
+    MPI_Barrier(MPI_COMM_WORLD);
     if (ProcRank == 0)
     {
         #ifndef RESEARCH
