@@ -1,5 +1,4 @@
-//* /usr/bin/time -o time.log --verbose ./out
-#define RESEARCH
+// #define RESEARCH
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

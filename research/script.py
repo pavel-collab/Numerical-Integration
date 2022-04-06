@@ -1,33 +1,37 @@
+#! /usr/bin/env python3
 import readline
 import matplotlib.pyplot as plt
 import numpy as np
 import PythonGraphMod
 
-ProcessAmount = 128
-
+# получаем список файлов с данными
 fd = open('data_file_list.dat', 'r')
 measures_data_files = fd.read().splitlines()
-# print(measures_data_files)
 fd.close()
 
+# количество процессов в каждом эксперементе
 process_vec = np.array([2, 4, 8, 16, 32, 64, 128])
+# среднее время работы программы в каждом эксперементе
 time_value = np.array([])
-time_var = np.array([]) # дисперсия
+# дисперсия времени работы в каждом эксперементе
+time_var = np.array([])
 
+# для каждого эксперемента вычисляем среднее время работы и дисперсию
 for file in measures_data_files:
-    # print(file)
     time_collection = np.fromfile(file, sep='\n')
     val = np.average(time_collection)
     var = np.var(time_collection)
     time_value = np.append(time_value, val)
     time_var = np.append(time_var, var)
-# print(time_var)
 
+# данные для интерполяции (см PythonGraphMod)
 process_vec_dence, time_value_dence = PythonGraphMod.InterpolateSet(process_vec, time_value, 'cubic', min(process_vec), max(process_vec))
 
+# создаем фигуры для отрисовки графиков
 fig1, ax1 = PythonGraphMod.CreateSimpleGraph()
 fig2, ax2 = PythonGraphMod.CreateSimpleGraph()
 
+# построение графиков
 plt.errorbar(process_vec, time_value, yerr=time_var, fmt='.', ecolor='black', color='black')
 ax1.scatter(process_vec, time_value, color='black', marker='o', s=2, alpha=1)
 ax1.plot(process_vec_dence, time_value_dence, color='blue', alpha=0.75, lw=1.5, ls='--')
@@ -49,5 +53,6 @@ plt.ylabel('time (seconds)')
 plt.xlabel('process amount')
 plt.show()
 
+# сохраняем полученные изображения
 fig1.savefig("./images/with_bar.pdf")
 fig2.savefig("./images/without_bar.pdf")
