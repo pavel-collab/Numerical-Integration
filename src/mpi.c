@@ -1,4 +1,4 @@
-#define RESEARCH
+// #define RESEARCH
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +13,7 @@
 //* mpic++ mpi.c -o mpi
 //* mpiexec -n 2 ./mpi 
 // double f(double x) {return x*x + sqrt(abs(x));}
-double f(double x) {return 1/x;}
+double f(double x) {return x;}
 
 int main (int argc, char *argv[])
 {
