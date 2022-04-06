@@ -17,21 +17,24 @@ double f(double x) {return x;}
 
 int main (int argc, char *argv[])
 {
+    // проверяем количество аргументов командной строки
     if (argc < 3) {
         printf("Usage: %s <integration limits> <file_name>", argv[0]);
         return -1;
     } 
 
-    // integration limits
+    // пределы интегрирвания
     double a = atof(argv[1]);
     double b = atof(argv[2]);
+
+    // записываем пределы интегрирования в буффер, для пересылки другим процессам
     double* buffer = (double*) malloc(2*sizeof(double));
     buffer[0] = a;
     buffer[1] = b;
 
     // выделяем переменную под частичную сумму и переменную под конечное значение
     double TotalSum, ProcSum = 0.0;
-    // переменные под количество процессов, под текущий процесс и под количество суммируемых значений
+    // переменные под количество процессов и под номер текущего процесса
     int ProcRank, ProcNum;
     // переменная типа MPI_Status
     MPI_Status Status;
@@ -46,7 +49,9 @@ int main (int argc, char *argv[])
     MPI_Comm_size (MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank (MPI_COMM_WORLD, &ProcRank);
 
+    // синхронизируем все потоки
     MPI_Barrier(MPI_COMM_WORLD);
+    // начинаем отсчет времени
     double start = MPI_Wtime();
 
     // рассылка данных на все процессы
@@ -56,21 +61,20 @@ int main (int argc, char *argv[])
     double i1 = buffer[0] + ((buffer[1] - buffer[0]) / ProcNum) * ProcRank;
     double i2 = buffer[0] + ((buffer[1] - buffer[0]) / ProcNum) * (ProcRank + 1);
 
-    // суммируем
+    // интегрируем
     ProcSum = Trapez(i1, i2, 5000000, f);
 
     // сборка частичных сумм на процессе с рангом 0
     if (ProcRank == 0) {
         TotalSum = ProcSum;
-        for (int i = 1; i < ProcNum; i++)
-    	{
-    	  MPI_Recv (&ProcSum, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 0,
-    		    MPI_COMM_WORLD, &Status);
+        for (int i = 1; i < ProcNum; i++) {
+    	  MPI_Recv (&ProcSum, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &Status);
     	  TotalSum = TotalSum + ProcSum; // MPI_Reduce
     	}
     }
-    else				// все процессы отсылают свои частичные суммы
-      MPI_Send (&ProcSum, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+    else
+        MPI_Send (&ProcSum, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+        
     // вывод результата
     MPI_Barrier(MPI_COMM_WORLD);
     if (ProcRank == 0)
@@ -92,6 +96,8 @@ int main (int argc, char *argv[])
         fclose(fd);
         #endif
     }
+
+    free(buffer);
     MPI_Finalize ();
     return 0;
 }   
