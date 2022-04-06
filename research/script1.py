@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PythonGraphMod
 
-ProcessAmount = 101
+ProcessAmount = 128
 
 fd = open('data_file_list.dat', 'r')
 measures_data_files = fd.read().splitlines()
 # print(measures_data_files)
 fd.close()
 
-process_vec = np.arange(2, ProcessAmount+1)
+process_vec = np.array([2, 4, 8, 16, 32, 64, 128])
 time_value = np.array([])
 time_var = np.array([]) # дисперсия
 
