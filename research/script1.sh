@@ -2,7 +2,7 @@
 
 for file in $(cat data_file_list.dat)
 do
-# rm "$file"
+rm "$file"
 touch "$file"
 done
 
@@ -15,6 +15,6 @@ do
     do
     ../build/main 0 1 "x*x" "$process_amount" "$file"
     done
-    process_amount+=1
+    process_amount=process_amount*2
 done
 echo "end"
