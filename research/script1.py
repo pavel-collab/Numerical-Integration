@@ -3,6 +3,7 @@ import readline
 import matplotlib.pyplot as plt
 import numpy as np
 import PythonGraphMod
+import datetime
 
 # получаем список файлов с данными
 fd = open('data_file_list.dat', 'r')
@@ -53,6 +54,8 @@ plt.ylabel('time (seconds)')
 plt.xlabel('process amount')
 plt.show()
 
-# сохраняем в векторном формате
-fig1.savefig("./images/with_bar.pdf")
-fig2.savefig("./images/without_bar.pdf")
+now = datetime.datetime.now()
+date_time = now.strftime("%d-%m-%Y %H:%M")
+# сохраняем полученные изображения
+fig1.savefig("./images/with_bar" + date_time + ".pdf")
+fig2.savefig("./images/without_bar" + date_time + ".pdf")
