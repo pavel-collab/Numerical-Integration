@@ -11,7 +11,7 @@ measures_data_files = fd.read().splitlines()
 fd.close()
 
 # массив с количеством процессов для каждого эксперемента
-process_vec = np.array([2, 4, 8, 16, 32, 64, 128])
+process_vec = np.array([2, 4, 8, 12, 16, 20, 32, 50, 64, 100, 128])
 # среднее время работы программы
 time_value = np.array([])
 # дисперсия выборки
