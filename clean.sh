@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
 FILE1=./research/tmp.so
+FILE2=./src/mpi
 DIR1=./build
 DIR2=./research/__pycache__
 DIR3=./.vscode
@@ -8,6 +9,11 @@ DIR3=./.vscode
 if test -f "$FILE1"; then
     echo "$FILE1 exists"
     rm "$FILE1"
+fi
+
+if test -f "$FILE2"; then
+    echo "$FILE2 exists"
+    rm "$FILE2"
 fi
 
 if test -d "$DIR1"; then

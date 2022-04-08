@@ -2,8 +2,17 @@
 import readline
 import matplotlib.pyplot as plt
 import numpy as np
+from sys import argv, exit
 import PythonGraphMod
 import datetime
+
+# check comand line parametrs
+if len(argv) != 2:
+    print("Invalid amount of argv\n")
+    print("Usage: ./run_graphics.py <technology_name>")
+    exit(1)
+else:
+    tech_name = argv[1]
 
 # получаем список файлов с данными
 fd = open('data_file_list.dat', 'r')
@@ -57,5 +66,5 @@ plt.show()
 now = datetime.datetime.now()
 date_time = now.strftime("%d-%m-%Y %H:%M")
 # сохраняем полученные изображения
-fig1.savefig("./images/with_bar" + date_time + ".pdf")
-fig2.savefig("./images/without_bar" + date_time + ".pdf")
+fig1.savefig("./images/with_bar_" + tech_name + "_" + date_time + ".pdf")
+fig2.savefig("./images/without_bar_" + tech_name + "_" + date_time + ".pdf")

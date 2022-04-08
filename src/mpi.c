@@ -10,10 +10,7 @@
 #include "mpi.h"
 #include "../include/lib.h"
 
-//* mpic++ mpi.c -o mpi
-//* mpiexec -n 2 ./mpi 
-// double f(double x) {return x*x + sqrt(abs(x));}
-double f(double x) {return x;}
+double f(double x) {return x*x + sqrt(abs(x));}
 
 int main (int argc, char *argv[])
 {
