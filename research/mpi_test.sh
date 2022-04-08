@@ -15,7 +15,7 @@ echo "start test"
 # запускаем программу 20 раз, чтобы получить выборку данных
 for file in $(cat data_file_list.dat); do
     for ((j = 0; j < 20; j+=1)) do
-    mpiexec -n "$process_amount" ../src/mpi 0 10 "$file" 
+    mpiexec -n "$process_amount" ../src/mpi 0 1000000000000000000000000000000000000000000 "$file" 
     done
     process_amount=process_amount*2
 done
